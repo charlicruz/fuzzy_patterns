@@ -91,9 +91,9 @@ def main():
     fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w[0], w[1], w[2], w[3],w[4], w[5], w[6], w[7],w[8], w[9], w[10], w[11],w[12], w[13], w[14], w[15],w[16], w[17], w[18], w[19],w[20], w[21], w[22], w[23],iris, iris.target)
 
 	# Test Fuzzy
-    # w = [0.07, 0.34, 0.48, 0.26] # 95%
+    w = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
     # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    # print(1.0 - fitness(w))
+    print(1.0 - fitness(w))
 
     record = {'GA': [], 'PSO': []}
 
@@ -108,7 +108,7 @@ def main():
         bounds=[(0, 1), (0, 1), (0, 1), (0, 1)] 
         best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
         record['PSO'].append(1.0 - fbest)
-
+# 
 
 	# Statistcs about the runs
     print('GA:')
