@@ -61,7 +61,10 @@ def evaluate_new_fuzzy_system(ws, data, target):
         for t in ['s', 'm', 'l']:
             x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
-    # you need to create your rules here
+    # you need to evaluate each membership here
+    # is_something = np...
+    # is_another_thing = np...
+    # is_another_thing_2 = np....
 
     # you need to evaluate the result here
     #  result = np.argmax([is_something, is_another_thing, is_another_thing_2], axis=0)
