@@ -23,29 +23,46 @@ def normalize_dataset(dataset):
 	return (dataset - min_arr) / (np.amax(dataset, axis=0) - min_arr)
 
 
-def evaluate_new_fuzzy_system(w1, w2, w3, w4, data, target):
+def evaluate_new_fuzzy_system(w1, w2, w3, w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,w17,w18,w19,w20,w21,w22,w23,w24, data, target):
+    universe = np.linspace(0, 1, 100)
 
-	universe = np.linspace(0, 1, 100)
-
-	x = []
-	for w in [w1, w2, w3, w4]:
-		x.append({'s': fuzz.trimf(universe, [0.0, 0.0, w]),
+    x = []
+    for w in [w1, w2, w3, w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,w17,w18,w19,w20,w21,w22,w23,w24]:
+        x.append({'s': fuzz.trimf(universe, [0.0, 0.0, w]),
 		          'm': fuzz.trimf(universe, [0.0, w, 1.0]),
 			      'l': fuzz.trimf(universe, [w, 1.0, 1.0])})
 
-	x_memb = []
-	for i in range(4):
-		x_memb.append({})
-		for t in ['s', 'm', 'l']:
-			x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
+# 	x_memb = []
+# 	for i in range(4):
+# 		x_memb.append({})
+# 		for t in ['s', 'm', 'l']:
+# 			x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
-	is_setosa = np.fmin(np.fmax(x_memb[2]['s'], x_memb[2]['m']), x_memb[3]['s'])
-	is_versicolor = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
-	is_virginica = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
+# 	is_setosa = np.fmin(np.fmax(x_memb[2]['s'], x_memb[2]['m']), x_memb[3]['s'])
+# 	is_versicolor = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
+# 	is_virginica = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
 
-	result = np.argmax([is_setosa, is_versicolor, is_virginica], axis=0)
+#MY RULES ###########
+###R1=x1=x2= long and X5=x6= long and x9=x10=middle and x17=x18 =short then Inefficient
+####R2= x7=x8=long and x15=x16= middle and x23=x24=short then Efficient
+###R3=  x3=x4= long and x11=x12 = middle and x13=x14=middle and x19=x20=short and x21=x22= short then Mixt
+    
+    x_memb = []
+    for i in range(24):
+        x_memb.append({})
+        for t in ['s', 'm', 'l']:
+            [i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
-	return (result == target).mean()
+    is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['m']), x_memb[3]['s'])
+    is_mixt = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
+    is_inefficient = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
+
+
+
+	#result = np.argmax([is_setosa, is_versicolor, is_virginica], axis=0)
+    result = np.argmax([is_efficient, is_mixt, is_inefficient], axis=0)
+
+    return (result == target).mean()
 
 
 def main():
@@ -71,12 +88,12 @@ def main():
    # normalized_iris = normalize_dataset(iris.data)
     n_features = iris.shape[1]
 
-    fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w[0], w[1], w[2], w[3],w[4], w[5], w[6], w[7],w[8], w[9], w[10], w[11],w[12], w[13], w[14], w[15],w[16], w[17], w[17], w[18],w[19], w[20], w[21], w[22],w[23], w[24],iris, iris.target)
+    fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w[0], w[1], w[2], w[3],w[4], w[5], w[6], w[7],w[8], w[9], w[10], w[11],w[12], w[13], w[14], w[15],w[16], w[17], w[18], w[19],w[20], w[21], w[22], w[23],iris, iris.target)
 
 	# Test Fuzzy
-    w = [0.07, 0.34, 0.48, 0.26] # 95%
-    w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    print(1.0 - fitness(w))
+    # w = [0.07, 0.34, 0.48, 0.26] # 95%
+    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
+    # print(1.0 - fitness(w))
 
     record = {'GA': [], 'PSO': []}
 
