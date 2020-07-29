@@ -85,7 +85,7 @@ def main():
     #               [0.13333,0.12727,0.03636,0]])
 	#iris = datasets.load_iris()
 
-    dataset = pd.read_csv('random_example2.csv', sep=",")
+    dataset = pd.read_csv('random_example2.csv')
 
     # iris = load_my_dataset()
 
