@@ -66,11 +66,25 @@ def evaluate_new_fuzzy_system(ws, data, target):
     # is_another_thing = np...
     # is_another_thing_2 = np....
 
+    # is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['m']), x_memb[3]['s'])
+    # is_mixt = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
+    # is_inefficient = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
+
+    is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['l']), x_memb[5]['l'], x_memb[6]['l'], x_memb[9]['m'], x_memb[10]['m'], x_memb[17]['s'], x_memb[18]['s'])
+    is_inefficient = np.fmin(np.fmax(x_memb[7]['s'], x_memb[8]['l']), x_memb[15]['m'], x_memb[16]['m'], x_memb[23]['s'], x_memb[24]['s'])
+    is_mixed = np.fmin(np.fmax(x_memb[3]['l'], x_memb[4]['l']), x_memb[11]['l'], x_memb[12]['m'], x_memb[13]['m'], x_memb[14]['m'], x_memb[19]['s'], x_memb[20]['s'])
+
+#MY RULES ###########
+###R1=x1=x2= long and X5=x6= long and x9=x10=middle and x17=x18 =short then Inefficient
+####R2= x7=x8=long and x15=x16= middle and x23=x24=short then Efficient
+###R3=  x3=x4= long and x11=x12 = middle and x13=x14=middle and x19=x20=short and x21=x22= short then Mixt
+
     # you need to evaluate the result here
     #  result = np.argmax([is_something, is_another_thing, is_another_thing_2], axis=0)
-
+    result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
+   
     # finally, evaluate the system
-    # return (result == target).mean()
+    return (result == target).mean()
 
 
 def main():
