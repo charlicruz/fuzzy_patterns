@@ -6,6 +6,9 @@ from sklearn import datasets
 from genetic_algorithm import genetic_algorithm
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
 import numpy as np
 import csv
@@ -57,7 +60,7 @@ def main():
     #               [0.13333,0.12727,0.03636,0]])
 	#iris = datasets.load_iris()
    
-    iris = pd.read_csv('random_example.csv')#, parse_dates=True, index_col=0)
+    iris = pd.read_csv('random_example_test.csv')#, parse_dates=True, index_col=0)
 	
 
 
@@ -65,51 +68,48 @@ def main():
     # iris = load_my_dataset()
      
 	#iris = datasets.load_iris()
-  
-	normalized_iris = normalize_dataset(iris.data)
-	n_features = normalized_iris.shape[1]
+   # normalized_iris = normalize_dataset(iris.data)
+    n_features = iris.shape[1]
 
-	fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w[0], w[1], w[2], w[3], normalized_iris, iris.target)
+    fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w[0], w[1], w[2], w[3],w[4], w[5], w[6], w[7],w[8], w[9], w[10], w[11],w[12], w[13], w[14], w[15],w[16], w[17], w[17], w[18],w[19], w[20], w[21], w[22],w[23], w[24],iris, iris.target)
 
 	# Test Fuzzy
-	w = [0.07, 0.34, 0.48, 0.26] # 95%
-	w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-	print(1.0 - fitness(w))
+    w = [0.07, 0.34, 0.48, 0.26] # 95%
+    w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
+    print(1.0 - fitness(w))
 
-	record = {'GA': [], 'PSO': []}
+    record = {'GA': [], 'PSO': []}
 
-	for _ in tqdm(range(30)):
+    for _ in tqdm(range(30)):
 
 		# GA
-		best, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
-		record['GA'].append(1.0 - fbest)
+        t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
+        record['GA'].append(1.0 - fbest)
 
 		# PSO
-		initial=[0.5, 0.5, 0.5, 0.5]             
-		bounds=[(0, 1), (0, 1), (0, 1), (0, 1)] 
-		best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
-		record['PSO'].append(1.0 - fbest)
+        initial=[0.5, 0.5, 0.5, 0.5]             
+        bounds=[(0, 1), (0, 1), (0, 1), (0, 1)] 
+        best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
+        record['PSO'].append(1.0 - fbest)
 
 
 	# Statistcs about the runs
-	print('GA:')
-	print(np.amax(record['GA']), np.amin(record['GA']))
-	print(np.mean(record['GA']), np.std(record['GA']))
+    print('GA:')
+    print(np.amax(record['GA']), np.amin(record['GA']))
+    print(np.mean(record['GA']), np.std(record['GA']))
 
-	print('PSO:')
-	print(np.amax(record['PSO']), np.amin(record['PSO']))
-	print(np.mean(record['PSO']), np.std(record['PSO']))
+    print('PSO:')
+    print(np.amax(record['PSO']), np.amin(record['PSO']))
+    print(np.mean(record['PSO']), np.std(record['PSO']))
 
 
-	fig, ax = plt.subplots(figsize=(5, 4))
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys())) 
 
-	ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys())) 
-
-	ax.set_xlabel('Algoritmo')
-	ax.set_ylabel('Acurácia')
-
-	plt.tight_layout()
-	plt.show()
+    ax.set_xlabel('Algoritmo')
+    ax.set_ylabel('Acurácia')   
+    plt.tight_layout()
+    plt.show()
 	
 
 if __name__ == '__main__':
