@@ -110,7 +110,7 @@ def main():
     n_features = normalized_dataset.shape[1]
     target=[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2]
     print(target)
-    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, ws, target)
+    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, normalized_dataset, target)
 
 	# Test Fuzzy
     ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
