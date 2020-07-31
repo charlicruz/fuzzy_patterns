@@ -71,7 +71,7 @@ def evaluate_new_fuzzy_system(ws, data, target):
     # is_inefficient = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
 
     is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['l']), x_memb[5]['l'], x_memb[6]['l'], x_memb[9]['m'], x_memb[10]['m'], x_memb[17]['s'], x_memb[18]['s'])
-    is_inefficient = np.fmin(np.fmax(x_memb[7]['s'], x_memb[8]['l']), x_memb[15]['m'], x_memb[16]['m'], x_memb[23]['s'], x_memb[24]['s'])
+    is_inefficient = np.fmax(np.fmax(x_memb[7]['s'], x_memb[8]['l']), x_memb[15]['m'], x_memb[16]['m'], x_memb[23]['s'], x_memb[24]['s'])
     is_mixed = np.fmin(np.fmax(x_memb[3]['l'], x_memb[4]['l']), x_memb[11]['l'], x_memb[12]['m'], x_memb[13]['m'], x_memb[14]['m'], x_memb[19]['s'], x_memb[20]['s'])
 
 #MY RULES ###########
@@ -106,48 +106,49 @@ def main():
 	#iris = datasets.load_iris()
 
     normalized_dataset = normalize_dataset(dataset)
-
+    print(normalized_dataset)
     n_features = normalized_dataset.shape[1]
-
-    fitness = lambda w: 1.0 - evaluate_new_fuzzy_system(w, dataset, dataset.target)
+    target=[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2]
+    print(target)
+    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, ws, target)
 
 	# Test Fuzzy
-    #w = [0.07, 0.34, 0.48, 0.26] # 95%
-    #w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    #print(1.0 - fitness(w))
+    ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
+    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
+    print(1.0 - fitness(ws))
 
-    record = {'GA': [], 'PSO': []}
+#     record = {'GA': [], 'PSO': []}
 
-    for _ in tqdm(range(30)):
+#     for _ in tqdm(range(30)):
 
-		# GA
-        t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
-        record['GA'].append(1.0 - fbest)
+# 		# GA
+#         t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
+#         record['GA'].append(1.0 - fbest)
 
-		# PSO
-        initial=[0.5, 0.5, 0.5, 0.5]
-        bounds=[(0, 1), (0, 1), (0, 1), (0, 1)]
-        best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
-        record['PSO'].append(1.0 - fbest)
-
-
-	# Statistcs about the runs
-    print('GA:')
-    print(np.amax(record['GA']), np.amin(record['GA']))
-    print(np.mean(record['GA']), np.std(record['GA']))
-
-    print('PSO:')
-    print(np.amax(record['PSO']), np.amin(record['PSO']))
-    print(np.mean(record['PSO']), np.std(record['PSO']))
+# 		# PSO
+#         initial=[0.5, 0.5, 0.5, 0.5]
+#         bounds=[(0, 1), (0, 1), (0, 1), (0, 1)]
+#         best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
+#         record['PSO'].append(1.0 - fbest)
 
 
-    fig, ax = plt.subplots(figsize=(5, 4))
-    ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys()))
+# 	# Statistcs about the runs
+#     print('GA:')
+#     print(np.amax(record['GA']), np.amin(record['GA']))
+#     print(np.mean(record['GA']), np.std(record['GA']))
 
-    ax.set_xlabel('Algoritmo')
-    ax.set_ylabel('Acurácia')
-    plt.tight_layout()
-    plt.show()
+#     print('PSO:')
+#     print(np.amax(record['PSO']), np.amin(record['PSO']))
+#     print(np.mean(record['PSO']), np.std(record['PSO']))
+
+
+#     fig, ax = plt.subplots(figsize=(5, 4))
+#     ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys()))
+
+#     ax.set_xlabel('Algoritmo')
+#     ax.set_ylabel('Acurácia')
+#     plt.tight_layout()
+#     plt.show()
 
 
 if __name__ == '__main__':
