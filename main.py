@@ -1,3 +1,4 @@
+#carlos cruz / 01082020
 import matplotlib.pyplot as plt
 import numpy as np
 import skfuzzy as fuzz
@@ -9,12 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
 import csv
-
 import pandas as pd
-
-# https://github.com/nathanrooy/particle-swarm-optimization
 import pso_simple
 
 def normalize_dataset(dataset):
@@ -37,7 +34,6 @@ def evaluate_new_fuzzy_system(ws, data, target):
             x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
     # MY RULES ###########
-
     # R2 = x7 = x8 = long and x15 = x16 = middle and x23 = x24 = short then Efficient
     # What I understood:
     #
@@ -121,60 +117,56 @@ def evaluate_new_fuzzy_system(ws, data, target):
     result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
     return (result == target).mean()
 
-
 def load_dataset(filename):
     raw_dataset = pd.read_csv(filename)
     data = normalize_dataset(raw_dataset.values[:, :-1])
     target = raw_dataset['TARGET'].values
     return data, target
 
-
 def main():
 
     data, target = load_dataset('random_example_test.csv')
-
+    normalized = normalize_dataset(data)
     n_features = data.shape[1]
 
     fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, data, target)
-
 	# Test Fuzzy
     ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
     # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    print(1.0 - fitness(ws))
+    Classification=1.0 - fitness(ws)
+    print(Classification)
+    
 
-#     record = {'GA': [], 'PSO': []}
-
-#     for _ in tqdm(range(30)):
-
-# 		# GA
-#         t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
-#         record['GA'].append(1.0 - fbest)
-
+    record = {'GA': [], 'Classification without GA': []}
+    for _ in tqdm(range(30)):
+		# GA
+        t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
+        record['GA'].append(1.0 - fbest)
 # 		# PSO
 #         initial=[0.5, 0.5, 0.5, 0.5]
 #         bounds=[(0, 1), (0, 1), (0, 1), (0, 1)]
 #         best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
 #         record['PSO'].append(1.0 - fbest)
+    print(t)
+    plt.plot(t)
+    #print(fbest)
+ 	# Statistcs about the runs
+    print('GA:')
+    print(np.amax(record['GA']), np.amin(record['GA']))
+    print(np.mean(record['GA']), np.std(record['GA']))
 
+    # record['Classification']
+    # print('PSO:')
+    # print(np.amax(record['PSO']), np.amin(record['PSO']))
+    # print(np.mean(record['PSO']), np.std(record['PSO']))
+    
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys()))
 
-# 	# Statistcs about the runs
-#     print('GA:')
-#     print(np.amax(record['GA']), np.amin(record['GA']))
-#     print(np.mean(record['GA']), np.std(record['GA']))
-
-#     print('PSO:')
-#     print(np.amax(record['PSO']), np.amin(record['PSO']))
-#     print(np.mean(record['PSO']), np.std(record['PSO']))
-
-
-#     fig, ax = plt.subplots(figsize=(5, 4))
-#     ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys()))
-
-#     ax.set_xlabel('Algoritmo')
-#     ax.set_ylabel('Acurácia')
-#     plt.tight_layout()
-#     plt.show()
-
+    ax.set_xlabel('Comparison')
+    ax.set_ylabel('Accuracy')
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == '__main__':
 	main()
