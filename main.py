@@ -21,31 +21,6 @@ def normalize_dataset(dataset):
     min_arr = np.amin(dataset, axis=0)
     return (dataset - min_arr) / (np.amax(dataset, axis=0) - min_arr)
 
-
-# def evaluate_new_fuzzy_system(w1, w2, w3, w4, data, target):
-
-# 	universe = np.linspace(0, 1, 100)
-
-# 	x = []
-# 	for w in [w1, w2, w3, w4]:
-# 		x.append({'s': fuzz.trimf(universe, [0.0, 0.0, w]),
-# 		          'm': fuzz.trimf(universe, [0.0, w, 1.0]),
-# 			      'l': fuzz.trimf(universe, [w, 1.0, 1.0])})
-
-# 	x_memb = []
-# 	for i in range(4):
-# 		x_memb.append({})
-# 		for t in ['s', 'm', 'l']:
-# 			x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
-
-# 	is_setosa = np.fmin(np.fmax(x_memb[2]['s'], x_memb[2]['m']), x_memb[3]['s'])
-# 	is_versicolor = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
-# 	is_virginica = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
-
-# 	result = np.argmax([is_setosa, is_versicolor, is_virginica], axis=0)
-
-# 	return (result == target).mean()
-
 def evaluate_new_fuzzy_system(ws, data, target):
     universe = np.linspace(0, 1, 100)
     x = []
@@ -61,56 +36,106 @@ def evaluate_new_fuzzy_system(ws, data, target):
         for t in ['s', 'm', 'l']:
             x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
-    # you need to evaluate each membership here
-    # is_something = np...
-    # is_another_thing = np...
-    # is_another_thing_2 = np....
+    # MY RULES ###########
 
-    # is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['m']), x_memb[3]['s'])
-    # is_mixt = np.fmax(np.fmin(np.fmin(np.fmin(np.fmax(x_memb[0]['s'], x_memb[0]['l']), np.fmax(x_memb[1]['m'], x_memb[1]['l'])), np.fmax(x_memb[2]['m'], x_memb[2]['l'])),x_memb[3]['m']), np.fmin(x_memb[0]['m'], np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']),x_memb[2]['s']), x_memb[3]['l'])))
-    # is_inefficient = np.fmin(np.fmin(np.fmax(x_memb[1]['s'], x_memb[1]['m']), x_memb[2]['l']), x_memb[3]['l'])
+    # R2 = x7 = x8 = long and x15 = x16 = middle and x23 = x24 = short then Efficient
+    # What I understood:
+    #
+    #
+    # x7 is long AND x8 is LONG AND x15 is middle AND x16 is middle AND x23 is midle AND x24 is short -> efficient
+    #
+    #
+    # Since logical OR become a MAX and logical AND becomes MIN
+    # then we should have something like:
+    is_efficient =  np.fmin(
+        x_memb[6]['l'],
+        np.fmin(
+            x_memb[7]['l'],
+            np.fmin(
+                x_memb[14]['m'],
+                np.fmin(
+                    x_memb[15]['m'],
+                    np.fmin(
+                        x_memb[22]['m'],
+                        x_memb[23]['s']
+                    )
+                )
+            )
+        )
+    )
 
-    is_efficient = np.fmin(np.fmax(x_memb[1]['s'], x_memb[2]['l']), x_memb[5]['l'], x_memb[6]['l'], x_memb[9]['m'], x_memb[10]['m'], x_memb[17]['s'], x_memb[18]['s'])
-    is_inefficient = np.fmax(np.fmax(x_memb[7]['s'], x_memb[8]['l']), x_memb[15]['m'], x_memb[16]['m'], x_memb[23]['s'], x_memb[24]['s'])
-    is_mixed = np.fmin(np.fmax(x_memb[3]['l'], x_memb[4]['l']), x_memb[11]['l'], x_memb[12]['m'], x_memb[13]['m'], x_memb[14]['m'], x_memb[19]['s'], x_memb[20]['s'])
+    # R1 = x1 = x2 = long and X5 = x6 = long and x9 = x10 = middle and x17 = x18 = short then Inefficient
+    is_inefficient = np.fmin(
+        x_memb[0]['l'],
+        np.fmin(
+            x_memb[1]['l'],
+            np.fmin(
+                x_memb[4]['l'],
+                np.fmin(
+                    x_memb[5]['l'],
+                    np.fmin(
+                        x_memb[8]['m'],
+                        np.fmin(
+                            x_memb[9]['m'],
+                            np.fmin(
+                                x_memb[16]['s'],
+                                x_memb[17]['s'],
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 
-#MY RULES ###########
-###R1=x1=x2= long and X5=x6= long and x9=x10=middle and x17=x18 =short then Inefficient
-####R2= x7=x8=long and x15=x16= middle and x23=x24=short then Efficient
-###R3=  x3=x4= long and x11=x12 = middle and x13=x14=middle and x19=x20=short and x21=x22= short then Mixt
+    # R3 = x3 = x4 = long and x11 = x12 = middle and x13 = x14 = middle and x19 = x20 = short and x21 = x22 = short then Mixt
+    is_mixed = np.fmin(
+        x_memb[2]['l'],
+        np.fmin(
+            x_memb[3]['l'],
+            np.fmin(
+                x_memb[10]['m'],
+                np.fmin(
+                    x_memb[11]['m'],
+                    np.fmin(
+                        x_memb[12]['m'],
+                        np.fmin(
+                            x_memb[13]['m'],
+                            np.fmin(
+                                x_memb[18]['s'],
+                                np.fmin(
+                                    x_memb[19]['s'],
+                                    np.fmin(
+                                        x_memb[20]['l'],
+                                        x_memb[21]['l'],
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 
-    # you need to evaluate the result here
-    #  result = np.argmax([is_something, is_another_thing, is_another_thing_2], axis=0)
     result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
-   
-    # finally, evaluate the system
     return (result == target).mean()
 
 
+def load_dataset(filename):
+    raw_dataset = pd.read_csv(filename)
+    data = normalize_dataset(raw_dataset.values[:, :-1])
+    target = raw_dataset['TARGET'].values
+    return data, target
+
+
 def main():
-    # iris = datasets.load_iris()
 
+    data, target = load_dataset('random_example_test.csv')
 
-    # iris = np.array([[0.99394,1,0.77212,0.77455],
-    #               [0.99394,1,0.78182,0.79394],
-    #               [0.35758,0.36364,0.26061,0.25455],
-    #               [0.21212,0.2484,0.27879,0.24242],
-    #               [0.125450,0.12182,0.006060,0.01818],
-    #               [0.13333,0.12727,0.03636,0]])
-	#iris = datasets.load_iris()
+    n_features = data.shape[1]
 
-    dataset = pd.read_csv('random_example_test.csv')
-
-    # iris = load_my_dataset()
-
-	#iris = datasets.load_iris()
-
-    normalized_dataset = normalize_dataset(dataset)
-    print(normalized_dataset)
-    n_features = normalized_dataset.shape[1]
-    target=[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2]
-    print(target)
-    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, normalized_dataset, target)
+    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, data, target)
 
 	# Test Fuzzy
     ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
