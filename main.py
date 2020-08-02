@@ -44,13 +44,13 @@ def evaluate_new_fuzzy_system(ws, data, target):
     # Since logical OR become a MAX and logical AND becomes MIN
     # then we should have something like:
     is_efficient =  np.fmin(
-        x_memb[6]['l'],
+        x_memb[21]['l'],
         np.fmin(
-            x_memb[7]['l'],
+            x_memb[19]['l'],
             np.fmin(
-                x_memb[14]['m'],
+                x_memb[20]['m'],
                 np.fmin(
-                    x_memb[15]['m'],
+                    x_memb[18]['m'],
                     np.fmin(
                         x_memb[22]['m'],
                         x_memb[23]['s']
@@ -70,12 +70,12 @@ def evaluate_new_fuzzy_system(ws, data, target):
                 np.fmin(
                     x_memb[5]['l'],
                     np.fmin(
-                        x_memb[8]['m'],
+                        x_memb[2]['m'],
                         np.fmin(
-                            x_memb[9]['m'],
+                            x_memb[7]['m'],
                             np.fmin(
-                                x_memb[16]['s'],
-                                x_memb[17]['s'],
+                                x_memb[3]['s'],
+                                x_memb[6]['s'],
                             )
                         )
                     )
@@ -86,9 +86,9 @@ def evaluate_new_fuzzy_system(ws, data, target):
 
     # R3 = x3 = x4 = long and x11 = x12 = middle and x13 = x14 = middle and x19 = x20 = short and x21 = x22 = short then Mixt
     is_mixed = np.fmin(
-        x_memb[2]['l'],
+        x_memb[14]['l'],
         np.fmin(
-            x_memb[3]['l'],
+            x_memb[15]['l'],
             np.fmin(
                 x_memb[10]['m'],
                 np.fmin(
@@ -102,8 +102,8 @@ def evaluate_new_fuzzy_system(ws, data, target):
                                 np.fmin(
                                     x_memb[19]['s'],
                                     np.fmin(
-                                        x_memb[20]['l'],
-                                        x_memb[21]['l'],
+                                        x_memb[9]['l'],
+                                        x_memb[8]['l'],
                                     )
                                 )
                             )
@@ -125,29 +125,30 @@ def load_dataset(filename):
 
 def main():
 
-    data, target = load_dataset('random_example_test.csv')
+    data, target = load_dataset('t.csv')#random_example_test
     normalized = normalize_dataset(data)
     n_features = data.shape[1]
 
     fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, data, target)
 	# Test Fuzzy
-    ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
-    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
+    #ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
+
+    ws = [0.993900000000000,1,0.772120000000000,0.774550000000000,0.993940000000000,1,0.781820000000000,0.793949000000000,0.357580000000000,0.363640000000000,0.260610000000000,0.254550000000000,0.212120000000000,0.248480000000000,0.278790000000000,0.242420000000000,0.125450000000000,0.121820000000000,0.00606000000000000,0.0181800000000000,0.133330000000000,0.127270000000000,0,0]    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
     Classification=1.0 - fitness(ws)
     print(Classification)
     
 
-    record = {'GA': [], 'Classification without GA': []}
-    for _ in tqdm(range(30)):
+    record = {'GA': [], 'PSO': []}
+    for _ in tqdm(range(10)):
 		# GA
-        t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=30, verbose=False)
+        t, fbest = genetic_algorithm(fitness_func=fitness, dim=n_features, n_individuals=10, epochs=40, verbose=False)
         record['GA'].append(1.0 - fbest)
-# 		# PSO
-#         initial=[0.5, 0.5, 0.5, 0.5]
-#         bounds=[(0, 1), (0, 1), (0, 1), (0, 1)]
-#         best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
-#         record['PSO'].append(1.0 - fbest)
-    print(t)
+		# PSO
+        initial=[0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5,0.5, 0.5, 0.5, 0.5]
+        bounds=[(0, 1), (0, 1), (0, 1), (0, 1),(0, 1), (0, 1), (0, 1), (0, 1),(0, 1), (0, 1), (0, 1), (0, 1),(0, 1), (0, 1), (0, 1), (0, 1),(0, 1), (0, 1), (0, 1), (0, 1),(0, 1), (0, 1), (0, 1), (0, 1)]
+        best, fbest = pso_simple.minimize(fitness, initial, bounds, num_particles=10, maxiter=30, verbose=False)
+        record['PSO'].append(1.0 - fbest)
+#     print(t)
     plt.plot(t)
     #print(fbest)
  	# Statistcs about the runs
@@ -155,10 +156,10 @@ def main():
     print(np.amax(record['GA']), np.amin(record['GA']))
     print(np.mean(record['GA']), np.std(record['GA']))
 
-    # record['Classification']
-    # print('PSO:')
-    # print(np.amax(record['PSO']), np.amin(record['PSO']))
-    # print(np.mean(record['PSO']), np.std(record['PSO']))
+    #record['Classification']
+    print('PSO:')
+    print(np.amax(record['PSO']), np.amin(record['PSO']))
+    print(np.mean(record['PSO']), np.std(record['PSO']))
     
     fig, ax = plt.subplots(figsize=(5, 4))
     ax.boxplot(list(record.values()), vert=True, patch_artist=True, labels=list(record.keys()))
@@ -167,6 +168,28 @@ def main():
     ax.set_ylabel('Accuracy')
     plt.tight_layout()
     plt.show()
+
+# import numpy as np
+# import skfuzzy as fuzz
+# from skfuzzy import control as ctrl
+
+# # New Antecedent/Consequent objects hold universe variables and membership
+# # functions
+# quality = ctrl.Antecedent(np.arange(0, 11, 1), 'pattern')
+# service = ctrl.Antecedent(np.arange(0, 11, 1), 'service')
+# tip = ctrl.Consequent(np.arange(0, 26, 1), 'tip')
+
+# # Auto-membership function population is possible with .automf(3, 5, or 7)
+# quality.automf(3)
+# service.automf(3)
+
+# # Custom membership functions can be built interactively with a familiar,
+# # Pythonic API
+# tip['inneficient'] = fuzz.trimf(tip.universe, [0, 0, 13])
+# tip['mixed'] = fuzz.trimf(tip.universe, [0, 13, 25])
+# tip['efficient'] = fuzz.trimf(tip.universe, [13, 25, 25])
+# # You can see how these look with .view()
+# quality['average'].view()
 
 if __name__ == '__main__':
 	main()
