@@ -117,35 +117,54 @@ def evaluate_new_fuzzy_system(ws, data, target):
     )
 
     result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
-    print(result)
+   # print(result)
     return (result == target).mean()
-    print(result)
+   # print(result)
 def load_dataset(filename):
     raw_dataset = pd.read_csv(filename)
     data = normalize_dataset(raw_dataset.values[:, :-1])
+   #.csv('test')
     target = raw_dataset['TARGET'].values
     return data, target
 
 def main():
+    
 
-    data, target = load_dataset('random_example_test.csv')#random_example_test con t sale 0.61
+    data, target = load_dataset('random_example_sn.csv')#random_example_test con t sale 0.61
     normalized = normalize_dataset(data)# con random sale 0.6 y 0.9 conGA
     n_features = data.shape[1]
 
-    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, data, target)
+    fitness = lambda ws: 1.0 - evaluate_new_fuzzy_system(ws, normalized, target)
     
     
     ###################confusion_matrix
-    print('Confusion matrix \n',  confusion_matrix(target,))
+#    print('Confusion matrix \n',  confusion_matrix(target,))
 	# Test Fuzzy
-    #ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
-   # ws = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-    ws = [0.993900000000000,1,0.772120000000000,0.774550000000000,0.993940000000000,1,0.781820000000000,0.793949000000000,0.357580000000000,0.363640000000000,0.260610000000000,0.254550000000000,0.212120000000000,0.248480000000000,0.278790000000000,0.242420000000000,0.125450000000000,0.121820000000000,0.00606000000000000,0.0181800000000000,0.133330000000000,0.127270000000000,0,0]    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    Classification=1.0 - fitness(ws)
+    # ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
+    # ws = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+    # ws = [0.993900000000000,1,0.772120000000000,0.774550000000000,0.993940000000000,1,0.781820000000000,0.793949000000000,0.357580000000000,0.363640000000000,0.260610000000000,0.254550000000000,0.212120000000000,0.248480000000000,0.278790000000000,0.242420000000000,0.125450000000000,0.121820000000000,0.00606000000000000,0.0181800000000000,0.133330000000000,0.127270000000000,0,0]    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
+    ws=[27,26.8,26.85,25.1,26.35,27.38,27.68,25.06,24.1,23,22,19,19.5,18,18.5,19,19.5,16.9,16.8,16,16.2,16.1,15.9,14]
+    wsx= normalize_dataset(ws)
+    # print(wsx)
+    Classification=1.0 - fitness(wsx)
     print(Classification)
+    print(target)
+    cm=confusion_matrix(target, Classification)
+    print('Confusion matrix \n',cm)
+    # plt.figure(num=10)
+    # cm=confusion_matrix(wsx, Classification)
+    # print(confusion_matrix(wsx, Classification))
+    # plt.imshow(confusion_matrix(wsx, Classification),
+    #         cmap='Blues', interpolation='nearest')
+    # plt.colorbar()
+    # for (i, j), z in np.ndenumerate(cm):
+    #     plt.text(j, i, z, ha='center', va='center')
+    # plt.grid(False)
+    # plt.ylabel('truth label')
+    # plt.xlabel('Predicted label');
+    # plt.savefig("matrix.pdf")
     
-
-
+    
     record = {'GA': [], 'PSO': []}
     for _ in tqdm(range(20)):
 		# GA
