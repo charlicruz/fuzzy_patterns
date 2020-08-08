@@ -117,8 +117,10 @@ def evaluate_new_fuzzy_system(ws, data, target):
     )
 
     result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
-   # print(result)
-    return (result == target).mean()
+    print(result)
+  #  return (result == target).mean()
+    return (result)# == target).mean()
+
     
 def load_dataset(filename):
     raw_dataset = pd.read_csv(filename)
@@ -147,28 +149,25 @@ def main():
     wsx= normalize_dataset(ws)
     print(wsx)
 
-    # y_true = [2, 0, 2, 2, 0, 1]
-    # y_pred = [0, 0, 2, 2, 0, 2]
-    # cm=confusion_matrix(y_true, y_pred)
-   # print('Confusion matrix \n',cm)
+ 
 
     Classification=1.0 - fitness(wsx)
-    print(Classification)
-    # print(target)
-    # cm=confusion_matrix(target, Classification)
-    # print('Confusion matrix \n',cm)
-    # plt.figure(num=10)
-    # cm=confusion_matrix(wsx, Classification)
-    # print(confusion_matrix(wsx, Classification))
-    # plt.imshow(confusion_matrix(wsx, Classification),
-    #         cmap='Blues', interpolation='nearest')
-    # plt.colorbar()
-    # for (i, j), z in np.ndenumerate(cm):
-    #     plt.text(j, i, z, ha='center', va='center')
-    # plt.grid(False)
-    # plt.ylabel('truth label')
-    # plt.xlabel('Predicted label');
-    # plt.savefig("matrix.pdf")
+    #print(Classification)
+    print(target)
+    cm=confusion_matrix(target, Classification)
+    print('Confusion matrix \n',cm)
+    plt.figure(num=10)
+    cm=confusion_matrix(target, Classification)
+    print(confusion_matrix(target, Classification))
+    plt.imshow(confusion_matrix(target, Classification),
+            cmap='Blues', interpolation='nearest')
+    plt.colorbar()
+    for (i, j), z in np.ndenumerate(cm):
+        plt.text(j, i, z, ha='center', va='center')
+    plt.grid(False)
+    plt.ylabel('truth label')
+    plt.xlabel('Predicted label');
+    plt.savefig("matrix.pdf")
     
     
 #     record = {'GA': [], 'PSO': []}
