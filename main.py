@@ -24,15 +24,18 @@ def evaluate_new_fuzzy_system(ws, data, target):
     universe = np.linspace(0, 1, 100)
     x = []
     for w in ws:
-        x.append({'s': fuzz.trimf(universe, [0.0, 0.0, w]),
-		          'm': fuzz.trimf(universe, [0.0, w, 1.0]),
-			      'l': fuzz.trimf(universe, [w, 1.0, 1.0])})
+        x.append({'x': fuzz.trimf(universe, [0.0, 0.0, w]),
+                  's': fuzz.trimf(universe, [0.0, w, 1.0]),
+		          'm': fuzz.trimf(universe, [w, 10.0, 10.0]),
+			      'l': fuzz.trimf(universe, [w, 100.0, 100.0])
+                  }
+)
 
     # membership
     x_memb = []
     for i in range(len(ws)):
         x_memb.append({})
-        for t in ['s', 'm', 'l']:
+        for t in ['s', 'm', 'l', 'x']:
             x_memb[i][t] = fuzz.interp_membership(universe, x[i][t], data[:, i])
 
     # MY RULES ###########
@@ -45,6 +48,9 @@ def evaluate_new_fuzzy_system(ws, data, target):
     #
     # Since logical OR become a MAX and logical AND becomes MIN
     # then we should have something like:
+   
+    is_ext_inefficient = np.fmin(x_memb[0]['x'], x_memb[1]['x'])
+                        
     is_efficient =  np.fmin(
         x_memb[21]['l'],
         np.fmin(
@@ -64,10 +70,10 @@ def evaluate_new_fuzzy_system(ws, data, target):
 
     # R1 = x1 = x2 = long and X5 = x6 = long and x9 = x10 = middle and x17 = x18 = short then Inefficient
     is_inefficient = np.fmin(
-        x_memb[0]['s'],
-        np.fmin(
-            x_memb[1]['s'],
-            np.fmin(
+        # x_memb[0]['s'],
+        # np.fmin(
+        #     x_memb[1]['s'],
+        #     np.fmin(
                 x_memb[4]['s'],
                 np.fmin(
                     x_memb[5]['s'],
@@ -83,8 +89,8 @@ def evaluate_new_fuzzy_system(ws, data, target):
                     )
                 )
             )
-        )
-    )
+        
+    
 
     # R3 = x3 = x4 = long and x11 = x12 = middle and x13 = x14 = middle and x19 = x20 = short and x21 = x22 = short then Mixt
     is_mixed = np.fmin(
@@ -116,8 +122,9 @@ def evaluate_new_fuzzy_system(ws, data, target):
         )
     )
 
-    result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
-    print(result)
+
+    result = np.argmax([is_efficient, is_mixed, is_inefficient,is_ext_inefficient], axis=0)
+ #   print(result)
   #  return (result == target).mean()
     return (result)# == target).mean()
 
@@ -145,17 +152,17 @@ def main():
     # ws = [0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26,0.07, 0.34, 0.48, 0.26] # 95%
     # ws = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
     # ws = [0.993900000000000,1,0.772120000000000,0.774550000000000,0.993940000000000,1,0.781820000000000,0.793949000000000,0.357580000000000,0.363640000000000,0.260610000000000,0.254550000000000,0.212120000000000,0.248480000000000,0.278790000000000,0.242420000000000,0.125450000000000,0.121820000000000,0.00606000000000000,0.0181800000000000,0.133330000000000,0.127270000000000,0,0]    # w = [0, 0.21664307088134033, 0.445098590128248, 0.2350617110613577] # 96.6%
-    ws=[27,26.8,26.85,25.1,26.35,27.38,27.68,25.06,24.1,23,22,19,19.5,18,18.5,19,19.5,16.9,16.8,16,16.2,16.1,15.9,14]
+    ws=[28,27.8,26.85,25.1,26.35,27.38,27.68,25.06,24.1,23,22,19,19.5,18,18.5,19,19.5,16.9,16.8,16,16.2,16.1,15.9,14]
     wsx= normalize_dataset(ws)
     print(wsx)
 
  
 
     Classification=1.0 - fitness(wsx)
-    #print(Classification)
     print(target)
+    print(Classification)
     cm=confusion_matrix(target, Classification)
-    print('Confusion matrix \n',cm)
+  #   print('Confusion matrix \n',cm)
     plt.figure(num=10)
     cm=confusion_matrix(target, Classification)
     print(confusion_matrix(target, Classification))
@@ -168,7 +175,6 @@ def main():
     plt.ylabel('truth label')
     plt.xlabel('Predicted label');
     plt.savefig("matrix.pdf")
-    
     
 #     record = {'GA': [], 'PSO': []}
 #     for _ in tqdm(range(20)):
