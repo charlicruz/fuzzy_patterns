@@ -23,11 +23,19 @@ def normalize_dataset(dataset):
 def evaluate_new_fuzzy_system(ws, data, target):
     universe = np.linspace(0, 1, 100)
     x = []
-    for w in ws:
-        x.append({'x': fuzz.trimf(universe, [0.0, 0.0, w]),
-                  's': fuzz.trimf(universe, [0.0, w, 1.0]),
-		          'm': fuzz.trimf(universe, [w, 10.0, 10.0]),
-			      'l': fuzz.trimf(universe, [w, 100.0, 100.0])
+#     for w in ws:
+#         x.append({'x': fuzz.trimf(universe, [0.0, 0.0, w]),
+#                   's': fuzz.trimf(universe, [0.0, w, 1.0]),
+# 		          'm': fuzz.trimf(universe, [w, 2.0, 2.0]),
+# 			      'l': fuzz.trimf(universe, [w, 5.0, 5.0])
+#                   }
+    for w0 in ws:
+        for w1 in ws:
+            
+            x.append({'x': fuzz.trimf(universe, [0.0, 0.0, w0]),
+                  's': fuzz.trimf(universe, [0.0, 0, w0]),
+		          'm': fuzz.trimf(universe, [0, 0, w1]),
+			      'l': fuzz.trimf(universe, [w1, 1.0, 1.0])
                   }
 )
 
@@ -50,7 +58,25 @@ def evaluate_new_fuzzy_system(ws, data, target):
     # then we should have something like:
    
     is_ext_inefficient = np.fmin(x_memb[0]['x'], x_memb[1]['x'])
-                        
+    is_ext_inefficient =  np.fmin(
+        x_memb[0]['x'],
+        np.fmin(
+            x_memb[1]['x'],
+            np.fmin(
+                x_memb[2]['x'],
+                np.fmin(
+                    x_memb[3]['x'],
+                    np.fmin(
+                        x_memb[4]['x'],
+                        x_memb[5]['x']
+                    )
+                )
+            )
+        )
+    )      
+  
+
+              
     is_efficient =  np.fmin(
         x_memb[21]['l'],
         np.fmin(
@@ -70,26 +96,14 @@ def evaluate_new_fuzzy_system(ws, data, target):
 
     # R1 = x1 = x2 = long and X5 = x6 = long and x9 = x10 = middle and x17 = x18 = short then Inefficient
     is_inefficient = np.fmin(
-        # x_memb[0]['s'],
-        # np.fmin(
-        #     x_memb[1]['s'],
-        #     np.fmin(
-                x_memb[4]['s'],
-                np.fmin(
-                    x_memb[5]['s'],
-                    np.fmin(
-                        x_memb[2]['s'],
-                        np.fmin(
                             x_memb[7]['s'],
                             np.fmin(
                                 x_memb[3]['s'],
                                 x_memb[6]['s'],
                             )
                         )
-                    )
-                )
-            )
-        
+                    
+       
     
 
     # R3 = x3 = x4 = long and x11 = x12 = middle and x13 = x14 = middle and x19 = x20 = short and x21 = x22 = short then Mixt
@@ -122,6 +136,78 @@ def evaluate_new_fuzzy_system(ws, data, target):
         )
     )
 
+    # is_efficient =  np.fmin(
+    #     x_memb[21]['l'],
+    #     np.fmin(
+    #         x_memb[19]['l'],
+    #         np.fmin(
+    #             x_memb[20]['l'],
+    #             np.fmin(
+    #                 x_memb[18]['l'],
+    #                 np.fmin(
+    #                     x_memb[22]['l'],
+    #                     x_memb[23]['l']
+    #                 )
+    #             )
+    #         )
+    #     )
+    # )
+
+    # # R1 = x1 = x2 = long and X5 = x6 = long and x9 = x10 = middle and x17 = x18 = short then Inefficient
+    # is_inefficient = np.fmin(
+    #     x_memb[0]['s'],
+    #     np.fmin(
+    #         x_memb[1]['s'],
+    #         np.fmin(
+    #             x_memb[4]['s'],
+    #             np.fmin(
+    #                 x_memb[5]['s'],
+    #                 np.fmin(
+    #                     x_memb[2]['s'],
+    #                     np.fmin(
+    #                         x_memb[7]['s'],
+    #                         np.fmin(
+    #                             x_memb[3]['s'],
+    #                             x_memb[6]['s'],
+    #                         )
+    #                     )
+    #                 )
+    #             )
+    #         )
+    #     )
+    # )
+
+    # # R3 = x3 = x4 = long and x11 = x12 = middle and x13 = x14 = middle and x19 = x20 = short and x21 = x22 = short then Mixt
+    # is_mixed = np.fmin(
+    #     x_memb[14]['m'],
+    #     np.fmin(
+    #         x_memb[15]['m'],
+    #         np.fmin(
+    #             x_memb[10]['m'],
+    #             np.fmin(
+    #                 x_memb[11]['m'],
+    #                 np.fmin(
+    #                     x_memb[12]['m'],
+    #                     np.fmin(
+    #                         x_memb[13]['m'],
+    #                         np.fmin(
+    #                             x_memb[18]['l'],
+    #                             np.fmin(
+    #                                 x_memb[19]['l'],
+    #                                 np.fmin(
+    #                                     x_memb[9]['s'],
+    #                                     x_memb[8]['s'],
+    #                                 )
+    #                             )
+    #                         )
+    #                     )
+    #                 )
+    #             )
+    #         )
+    #     )
+    # )
+
+    # result = np.argmax([is_efficient, is_mixed, is_inefficient], axis=0)
 
     result = np.argmax([is_efficient, is_mixed, is_inefficient,is_ext_inefficient], axis=0)
  #   print(result)
